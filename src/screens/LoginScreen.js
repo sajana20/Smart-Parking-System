@@ -3,12 +3,20 @@ import { SafeAreaView, TextInput, StyleSheet, Button, View, TouchableOpacity, Te
 // import userService from '../../service/user-service'
 
 
-function LoginScreen(props) {
+function LoginScreen({navigation}) {
 
     const [email, setEmail] = React.useState('');
     const [password, setPassword] = React.useState('');
 
+    const onLogin = (email, password) => {
+        navigation.navigate('ParkingArea')
+        // ValidityState = userService.login(email, password)
+        // if (ValidityState){
+        //     //navigate home screen
+        // }
     
+    
+    }
 
     return (
         <SafeAreaView style={styles.container}>
@@ -20,7 +28,7 @@ function LoginScreen(props) {
                     style={styles.input}
                     onChangeText={setEmail} 
                     value={email}
-                    placeholder='User Name'
+                    placeholder='Email'
                     placeholderTextColor={'white'}
                 />
                 <TextInput
@@ -30,10 +38,11 @@ function LoginScreen(props) {
                     placeholder="Password"
                     placeholderTextColor={'white'}
                     keyboardType="numeric"
+                    secureTextEntry={true}
                 />
             </View>
         <View>
-            <TouchableOpacity style={styles.loginbtn}>
+            <TouchableOpacity style={styles.loginbtn} onPress={onLogin}>
                 <Text>Login</Text>
             </TouchableOpacity> 
 
@@ -50,14 +59,7 @@ function LoginScreen(props) {
     );
 }
 
-const onLogin = (email, password) => {
-    ValidityState = userService.login(email, password)
-    if (ValidityState){
-        //navigate home screen
-    }
 
-
-}
 const onSignup = () => {
 }
 
@@ -81,7 +83,7 @@ const styles = StyleSheet.create({
         padding: 10,
         width: '100%',
         height: 50,
-        backgroundColor: 'red',
+        backgroundColor: '#cc0000',
         justifyContent: 'center',
         borderRadius: 6,
         marginBottom: 10
@@ -90,7 +92,7 @@ const styles = StyleSheet.create({
       },
     container: {
         flex: 1,
-        padding: 20,
+        padding: 30,
         backgroundColor: '#0C1020'
 
         // alignItems: 'center',

@@ -2,7 +2,7 @@ import React, {useState, useEffect} from 'react';
 import {View, TouchableOpacity, Text, StyleSheet, Platform, StatusBar, Image, SafeAreaView, Alert} from 'react-native';
 import parkingAreaService from '../../service/parking-area-service'
 
-function ParkingArea() {
+function ParkingArea({navigation}) {
     // const [zoneA, setZoneA] = useState([]);
     // const [zoneB, setZoneB] = useState([]);
     // const chunks = [];
@@ -46,8 +46,24 @@ function ParkingArea() {
     //     getAvailability();
     // }, []);
 
+    // const onConfirm = () => {
+    //     navigation.navigate('NavigationScreen')
+    // }
 
-
+    const onClick = () => {
+        Alert.alert("Confirm Reservation", "Are you sure ", [
+            {
+                text: "Yes",
+                onPress: ()=> {navigation.navigate('NavigationScreen')},
+            },
+            {
+                text: "No",
+                onPress: ()=>{}
+            }
+        ]);
+        // Alert.alert("Confirm Reservation", "Are you sure ", [{text: "Yes", onPress: {onConfirm}},{text: "No"}])
+       
+    }
    
    
   return (
@@ -57,7 +73,7 @@ function ParkingArea() {
        
         <View style={styles.Upcontainer}>
         <TouchableOpacity onPress={onClick}>
-            <ParkingSlot slotId = {1} isAvailable = 'false' />
+            <ParkingSlot slotId = {1} />
         </TouchableOpacity>
             <ParkingSlot slotId = {2}/>
             <ParkingSlot slotId = {3} isAvailable = 'false'/>
@@ -95,10 +111,7 @@ function ParkingArea() {
 
 
 
-const onClick = () => {
-    Alert.alert("Confirm Reservation", "Are you sure ", [{text: "Yes", onPress: {onConfirm}},{text: "No"}])
-   
-}
+
 
 const onConfirm = () => {
 
