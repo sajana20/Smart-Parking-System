@@ -11,6 +11,10 @@
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
+    "plugins": [
+      "@react-native-firebase/app",
+      "expo-secure-store"
+    ],
     "assetBundlePatterns": [
       "**/*"
     ],
@@ -21,10 +25,20 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
+      },
+      "web": {
+        "favicon": "./assets/favicon.png"
+      },
+      "package": "com.sajana_20.SPSystem",
+      "googleServicesFile": "./google-services.json"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "c6185a3c-2e9f-44f3-ae6f-d98b36cdadef"
       }
     },
-    "web": {
-      "favicon": "./assets/favicon.png"
-    }
+    "apiUrl" : "https://a89a-112-134-157-97.ngrok-free.app"
+
+    
   }
 }

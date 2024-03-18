@@ -1,48 +1,107 @@
-// import { useState, useEffect } from "react";
-// import axios from "axios";
+import axios from "axios";
+import Constants from "expo-constants";
 
-// const userService = {}
+const userService = {};
 
+userService.login = async (email, password) => {
+  const formData = new FormData();
 
+  formData.append("email", email);
+  formData.append("password", password);
 
-// userService.login = (email, password) => {
+  response = [];
+  const options = {
+    method: "POST",
+    url: Constants.expoConfig.apiUrl + "/login",
+    data: formData,
+    headers: {
+      "Content-type": "multipart/form-data",
+    },
+  };
 
-//     const formData = {
-//         email: email,
-//         password: password
-//       };
+  try {
+    response = await axios.request(options);
+    return response.data;
+  } catch (error) {
+    if (error.response.status == 401) {
+      alert("Invalid credentials ");
+    } else {
+      console.log(error);
+      alert("Login failed, Please Try again");
+    }
+    return null;
+  }
+};
 
-//     const [data, setData] = useState([])
-//     const [error, setError] = useState(null)
+userService.logout = async (id) => {
+  const formData = new FormData();
+  formData.append("user_id", id);
 
-    
-//     const options = {
-//         method: 'POST',
-//         url: 'https://sss.com/login',
-//         params: formData,
-//         headers: {'x':x}
-//     };
+  const options = {
+    method: "DETELE",
+    url: Constants.expoConfig.apiUrl + "/logout",
+    data: formData,
+    headers: {
+      "Content-type": "multipart/form-data",
+    },
+  };
 
-//     const fetchData = async () => {
-//         try {
-//             const response = await axios.request(options)
-//             setData(response.data.data);
+  try {
+    await axios.request(options);
+  } catch (error) {
+    alert("Logout failed, Please Try again");
+  }
+};
 
-//         }catch (error) {
-//             setError(error);
-//             alert('There is an error')
+userService.register = async (userName, email, password) => {
+  const formData = new FormData();
+  formData.append("user_name", userName);
+  formData.append("email", email);
+  formData.append("password", password);
 
-//         }
-//     }
+  const options = {
+    method: "POST",
+    url: Constants.expoConfig.apiUrl + "/signup",
+    data: formData,
+    headers: {
+      "Content-type": "multipart/form-data",
+    },
+  };
 
-//     useEffect(() => {
-//         fetchData();
+  try {
+    // show response to the user (Successfully added)
+    const response = await axios.request(options);
+    return response.data;
+  } catch (error) {
+    console.log("error", error);
+    alert("Registration failed, Please Try again");
+    return null;
+  }
+};
 
-//     })
+userService.reservaion = async (userId, slotId, video_data) => {
+    const formData = new FormData();
+    formData.append("userId", userId);
+    formData.append("slotId", slotId);
+    formData.append("video_data", video_data);
+  
+    const options = {
+      method: "POST",
+      url: Constants.expoConfig.apiUrl + "/reservaion",
+      data: formData,
+      headers: {
+        "Content-type": "multipart/form-data",
+      },
+    };
+  
+    try {
+      const response = await axios.request(options);
+      return response.data;
+    } catch (error) {
+      console.log("error", error);
+      alert("Reservaion failed, Please Try again");
+      return null;
+    }
+  };
 
-//     return {data}
-// }
-
-
-
-// export default userService;
+export default userService;

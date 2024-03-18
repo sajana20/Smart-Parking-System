@@ -3,34 +3,33 @@ import {
   SafeAreaView,
   TextInput,
   StyleSheet,
-  Button,
   View,
   TouchableOpacity,
   Text,
 } from "react-native";
 import userService from "../../service/user-service";
-import sessionStorageService from "../../service/session-storage-service";
-import messaging from "@react-native-firebase/messaging";
-import userTokenService from "../../service/user-token-service";
 
-function LoginScreen({ navigation }) {
+function RegisterScreen({ navigation }) {
+  const [userName, setUserName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
 
-  const onLogin = async (email, password) => {
-    validityState = await userService.login(email, password);
-    navigation.navigate("MainContent", { userId: validityState.id });
+  const onSignup = async (userName, email) => {
+    if (password !== confirmPassword) {
+      alert("Passwords do not match");
+      return;
+    }
 
-    await sessionStorageService.save("user_id", validityState.id.toString());
+    const response = await userService.register(userName, email, password);
+    //check the condition not sure
+    console.log("response12");
 
-    const token = await messaging().getToken();
-    const response = await userTokenService.sendToken(token);
+    console.log(response);
 
-    user = await sessionStorageService.get("user_id");
-  };
-
-  const onSignup = () => {
-    navigation.navigate("RegisterScreen");
+    if (response !== null) {
+      navigation.navigate("Login");
+    }
   };
 
   return (
@@ -38,7 +37,15 @@ function LoginScreen({ navigation }) {
       <View>
         <Text style={styles.title}>Welcome To Smart Parking System </Text>
       </View>
-      <View style={styles.useNamePassContainer}>
+      <View style={styles.signupContainer}>
+        <TextInput
+          style={styles.input}
+          onChangeText={setUserName}
+          value={userName}
+          placeholder="User Name"
+          placeholderTextColor={"white"}
+        />
+
         <TextInput
           style={styles.input}
           onChangeText={setEmail}
@@ -55,29 +62,27 @@ function LoginScreen({ navigation }) {
           keyboardType="numeric"
           secureTextEntry={true}
         />
+        <TextInput
+          style={styles.input}
+          onChangeText={setConfirmPassword}
+          value={confirmPassword}
+          placeholder="Confirm Password"
+          placeholderTextColor={"white"}
+          keyboardType="numeric"
+          secureTextEntry={true}
+        />
       </View>
       <View>
         <TouchableOpacity
-          style={styles.loginbtn}
-          onPress={onLogin.bind(this, email, password)}
+          style={styles.signupBtn}
+          onPress={onSignup.bind(this, userName, email)}
         >
-          <Text>Login</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity style={styles.loginbtn} onPress={onSignup}>
           <Text>SignUp</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.forgot} onPress={onPressForgotPassword}>
-          <Text style={{ color: "white" }}>Forgot Password?</Text>
         </TouchableOpacity>
       </View>
     </SafeAreaView>
   );
 }
-
-const onPressForgotPassword = () => {
-  // Do forgot password operation
-};
 
 const styles = StyleSheet.create({
   input: {
@@ -90,7 +95,7 @@ const styles = StyleSheet.create({
     borderColor: "white",
     color: "white",
   },
-  loginbtn: {
+  signupBtn: {
     backgroundColor: "#DDDDDD",
     padding: 10,
     width: "100%",
@@ -104,11 +109,8 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 30,
     backgroundColor: "#0C1020",
-
-    // alignItems: 'center',
-    // justifyContent: 'center',
   },
-  useNamePassContainer: {
+  signupContainer: {
     alignItems: "center",
   },
   forgot: {
@@ -120,4 +122,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default LoginScreen;
+export default RegisterScreen;
