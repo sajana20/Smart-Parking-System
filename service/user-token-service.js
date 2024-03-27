@@ -1,10 +1,11 @@
 import axios from "axios";
 import sessionStorageService from "../service/session-storage-service";
+import Constants from "expo-constants";
+
 
 const userTokenService = {};
 
 userTokenService.sendToken = async (token) => {
-  console.log("tryee111");
   user = await sessionStorageService.get("user_id");
   const formData = new FormData();
   formData.append("user_id", user);
@@ -13,7 +14,7 @@ userTokenService.sendToken = async (token) => {
   response = [];
   const options = {
     method: "POST",
-    url: "https://5945-112-134-153-239.ngrok-free.app/fcmToken",
+    url: Constants.expoConfig.apiUrl + "/fcmToken",
     data: formData,
     headers: {
       "Content-type": "multipart/form-data",

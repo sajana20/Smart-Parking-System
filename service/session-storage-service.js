@@ -11,4 +11,8 @@ sessionStorageService.get = async (key) => {
   return result;
 };
 
+sessionStorageService.remove = async (key) => {
+  await SecureStore.deleteItemAsync(key);
+};
+
 export default sessionStorageService;

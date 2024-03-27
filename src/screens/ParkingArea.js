@@ -11,15 +11,17 @@ import {
   Alert,
 } from "react-native";
 import parkingAreaService from "../../service/parking-area-service";
-import userReservationService from "../../service/user-reservation-service";
+import sessionStorageService from "../../service/session-storage-service";
+import { LinearGradient } from "expo-linear-gradient";
+import * as Location from "expo-location";
 
 function ParkingArea({ navigation, route }) {
   const [zoneA, setZoneA] = useState([]);
   const [zoneB, setZoneB] = useState([]);
   const [zoneC, setZoneC] = useState([]);
   const [zoneD, setZoneD] = useState([]);
-  const chunks = [];
   const getAvailability = async () => {
+    const chunks = [];
     const data = await parkingAreaService.getparkingAvailability();
     const chunkSize = data.length / 4;
 
@@ -37,13 +39,15 @@ function ParkingArea({ navigation, route }) {
               this,
               chunks[0][i].availability,
               route.params.userId,
-              chunks[0][i].slotId
+              chunks[0][i].slotId,
+              chunks[0][i].poi
             )}
             key={chunks[0][i].slotId}
           >
             <ParkingSlot
               slotId={chunks[0][i].slotId}
               isAvailable={chunks[0][i].availability}
+              userId={chunks[0][i].userId}
             />
           </TouchableOpacity>
         );
@@ -61,13 +65,15 @@ function ParkingArea({ navigation, route }) {
               this,
               chunks[1][i].availability,
               route.params.userId,
-              chunks[1][i].slotId
+              chunks[1][i].slotId,
+              chunks[1][i].poi
             )}
             key={chunks[1][i].slotId}
           >
             <ParkingSlot
               slotId={chunks[1][i].slotId}
               isAvailable={chunks[1][i].availability}
+              userId={chunks[1][i].userId}
             />
           </TouchableOpacity>
         );
@@ -84,13 +90,15 @@ function ParkingArea({ navigation, route }) {
               this,
               chunks[2][i].availability,
               route.params.userId,
-              chunks[2][i].slotId
+              chunks[2][i].slotId,
+              chunks[2][i].poi
             )}
             key={chunks[2][i].slotId}
           >
             <ParkingSlot
               slotId={chunks[2][i].slotId}
               isAvailable={chunks[2][i].availability}
+              userId={chunks[2][i].userId}
             />
           </TouchableOpacity>
         );
@@ -107,13 +115,15 @@ function ParkingArea({ navigation, route }) {
               this,
               chunks[3][i].availability,
               route.params.userId,
-              chunks[3][i].slotId
+              chunks[3][i].slotId,
+              chunks[3][i].poi
             )}
             key={chunks[3][i].slotId}
           >
             <ParkingSlot
               slotId={chunks[3][i].slotId}
               isAvailable={chunks[3][i].availability}
+              userId={chunks[3][i].userId}
             />
           </TouchableOpacity>
         );
@@ -126,115 +136,145 @@ function ParkingArea({ navigation, route }) {
     getAvailability();
   }, []);
 
-  const onSlotClick = () => {
-    navigation.navigate("NavigationScreen");
+  const startBackgroundTracking = async () => {
+    const { status } = await Location.requestForegroundPermissionsAsync();
+    if (status == "granted") {
+      await Location.requestBackgroundPermissionsAsync();
+    }
   };
 
-  const clickSlot = (availability, userId, slotId) => {
-    if (availability === 0) {
-      Alert.alert("Already Resesrved", "Please select an available slot", [
-        {
-          text: "Ok",
-        },
-      ]);
-    } else {
-      Alert.alert("Confirm Reservation", "Are you sure ", [
-        {
-          text: "Yes",
-          onPress: () => {
-            onPressSlot(userId, slotId);
-            navigation.navigate("NavigationScreen");
+  const clickSlot = (availability, userId, slotId, poi) => {
+    sessionStorageService.get("user_id").then((user) => {
+      if (availability === 0 && user.toString() === userId.toString()) {
+        Alert.alert(
+          "Cancel Reservation",
+          "Do you want to cancel the reservation",
+          [
+            {
+              text: "Yes",
+              onPress: () => {
+                parkingAreaService
+                  .updateSlotAvailability(0, slotId, 1)
+                  .then(() => {
+                    getAvailability().then(() => {});
+                  });
+              },
+            },
+            {
+              text: "No",
+              onPress: () => {},
+            },
+          ]
+        );
+      } else if (availability === 0) {
+        Alert.alert("Already Resesrved", "Please select an available slot", [
+          {
+            text: "Ok",
           },
-        },
-        {
-          text: "No",
-          onPress: () => {},
-        },
-      ]);
-    }
+        ]);
+      } else {
+        Alert.alert("Confirm Reservation", "Are you sure ", [
+          {
+            text: "Yes",
+            onPress: () => {
+              onPressSlot(userId, slotId);
+              startBackgroundTracking().then(() => {});
+
+              navigation.navigate("Navigation", { poi: poi });
+            },
+          },
+          {
+            text: "No",
+            onPress: () => {},
+          },
+        ]);
+      }
+    });
   };
 
   const onPressSlot = async (userId, slotId) => {
     await parkingAreaService.updateSlotAvailability(userId, slotId, 0);
-    // await userReservationService.reservaion(userId, slotId,)
   };
 
   return (
-    <SafeAreaView
-      style={{
-        flex: 1,
-        flexDirection: "row",
-        paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 0,
-        backgroundColor: "#0C1020",
-      }}
-    >
-      <View style={{ flex: 5 }}>
-        <View style={styles.Upcontainer}>
-          {zoneA}
+    <SafeAreaView style={{ flex: 1 }}>
+      <LinearGradient
+        colors={["#004B6B", "#001C29", "#002738"]}
+        style={[styles.card, styles.shadowProp, styles.container]}
+      >
+        <View style={{ flex: 5 }}>
+          <View style={styles.Upcontainer}>{zoneA}</View>
 
-          {/* <TouchableOpacity onPress={onSlotClick}>
-            <ParkingSlot slotId = {1} /> 
-        </TouchableOpacity>
-            <ParkingSlot slotId = {2}/>
-            <ParkingSlot slotId = {3} isAvailable = 'false'/> */}
+          <View style={styles.Downcontainer}>{zoneC}</View>
         </View>
+        <View style={{ flex: 1 }}></View>
+        <View style={{ flex: 5 }}>
+          <View style={styles.Upcontainer}>{zoneB}</View>
 
-        <View style={styles.Downcontainer}>
-          {/* <ParkingSlot slotId = {6}/>
-            <ParkingSlot slotId = {5} isAvailable = 'false'/>
-            <ParkingSlot slotId = {4}/> */}
-          {zoneC}
+          <View style={styles.Downcontainer}>{zoneD}</View>
         </View>
-      </View>
-      <View style={{ flex: 1 }}></View>
-      <View style={{ flex: 5 }}>
-        <View style={styles.Upcontainer}>
-          {/* <ParkingSlot slotId = {12} isAvailable = 'false' />
-        <ParkingSlot slotId = {11}/>
-        <ParkingSlot slotId = {10}/> */}
-          {zoneB}
-        </View>
-
-        <View style={styles.Downcontainer}>
-          {/* <ParkingSlot slotId = {7} />
-        <ParkingSlot slotId = {8} isAvailable = 'false' />
-        <ParkingSlot slotId = {9} /> */}
-          {zoneD}
-        </View>
-      </View>
+      </LinearGradient>
     </SafeAreaView>
   );
 }
-const ParkingSlot = ({ slotId, isAvailable }) => (
-  <View style={{ height: 100, borderColor: "#4D5366", borderWidth: 2 }}>
-    <Text
+
+const ParkingSlot = ({ slotId, isAvailable, userId }) => {
+  const [LoggedUser, setLoggedUser] = useState("");
+
+  useEffect(() => {
+    sessionStorageService.get("user_id").then((uld) => {
+      setLoggedUser(uld);
+    });
+  }, []);
+
+  return (
+    <View
       style={{
-        color: "white",
-        fontSize: 25,
-        fontWeight: "bold",
-        justifyContent: "center",
+        height: 100,
+        borderColor: "#CEFBFF",
+        borderWidth: 2,
+        backgroundColor:
+          LoggedUser === userId && !isAvailable
+            ? "rgba(0, 179, 255, 0.3)"
+            : "#002738",
       }}
     >
-      P{slotId}
-    </Text>
-    {!isAvailable ? (
-      <Image 
+      <Text
         style={{
-          objectFit: "contain",
-          height: 100,
-          width: "100%",
-          transform: [{ rotate: "90deg" }], 
-          position: "absolute",
+          color: "white",
+          fontSize: 25,
+          fontWeight: "bold",
+          justifyContent: "center",
         }}
-        source={require("../../assets/car-top-view.png")}
-      />
-    ) : null}   
-  </View>
-);
+      >
+        P{slotId}
+      </Text>
+      {!isAvailable ? (
+        <Image
+          style={{
+            objectFit: "contain",
+            height: 100,
+            width: "100%",
+            transform: [{ rotate: "90deg" }],
+            position: "absolute",
+          }}
+          source={require("../../assets/car-top-view.png")}
+        />
+      ) : null}
+    </View>
+  );
+};
 
 const styles = StyleSheet.create({
   Upcontainer: {
     flex: 1,
+  },
+
+  container: {
+    flex: 1,
+    flexDirection: "row",
+    paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 0,
+    backgroundColor: "#0C1020",
   },
   Downcontainer: {
     flex: 1,

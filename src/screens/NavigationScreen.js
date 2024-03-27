@@ -1,45 +1,59 @@
 import React from "react";
-import {
-  View,
-  Text,
-  Image,
-  Platform,
-  StatusBar,
-  SafeAreaView,
-} from "react-native";
 import { WebView } from "react-native-webview";
+import { Text, StyleSheet, View } from "react-native";
 
-function NavigationScreen({ navigation, route }) {
-  return (
-    //     <WebView
+export const showNavigation = () => {
+  return `
+    (function() {
+      let navLookupInterval = setInterval(() => {
+        let navigationBtn = document.querySelector('.poi-action-btn .btn-primary');
+        if(navigationBtn) {
+          navigationBtn.click();
+          document.querySelector('img[src="https://maps.gstatic.com/mapfiles/transparent.png"]').click();
+          document.querySelector('button[title="Close"]').click();
+          clearInterval(navLookupInterval);
+        }
+      }, 1000);
+      
+    })();
+  `;
+};
 
-    //   originWhitelist={['*']}
-    //   source={{ html: '<h1><center>Hello world</center></h1>' }}
-    // />
+function NavigationScreen({ route }) {
+  let webview = null;
+  const onRef = (ref) => {
+    webview = ref;
+  };
 
+  return route.params && route.params.poi ? (
     <WebView
-      scalesPageToFit={true}
-      bounces={false}
-      javaScriptEnabled
-      //   style={{ height: '100vh', width: '100%' }}
+      injectedJavaScript={showNavigation()}
+      javaScriptEnabled={true}
+      geolocationEnabled={true}
       source={{
-        html: `
-                  <!DOCTYPE html>
-                  <html>
-                    <head></head>
-                    <body>
-                      <div id="baseDiv" style="height: 100vh"><iframe width="100%" height="100%" frameborder="0" scrolling="yes" marginheight="0" marginwidth="0" src="https://anyplace.cs.ucy.ac.cy/viewer/?buid=building_5bb0eeb3-57a3-4919-851a-739ad0309db4_1710218746927&floor=0&selected=poi_066548c1-1bf3-4afc-9a33-c6ea4717fe2c"></iframe></div>
-                    </body>
-                  </html>
-            `,
+        uri:
+          "http://anyplace.cs.ucy.ac.cy/viewer/?buid=building_5bb0eeb3-57a3-4919-851a-739ad0309db4_1710218746927&floor=0&selected=" +
+          route.params.poi,
       }}
-      automaticallyAdjustContentInsets={false}
     />
-
-    // <SafeAreaView style={{paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0, backgroundColor: '#0C1020' }}>
-    //     <Image  style={{height:'100%', width:'100%'}} source={require('../../assets/navigation.png')}/>
-    // </SafeAreaView>
+  ) : (
+    <View style={styles.container}>
+      <Text style={styles.messageContainer}>Please Select a Slot</Text>
+    </View>
   );
 }
+const styles = StyleSheet.create({
+  messageContainer: {
+    textAlign: "center",
+    marginTop: "auto",
+    marginBottom: "auto",
+    fontSize: 30,
+    fontWeight: "bold",
+  },
+
+  container: {
+    flex: 1,
+  },
+});
 
 export default NavigationScreen;

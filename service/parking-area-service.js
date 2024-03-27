@@ -4,36 +4,6 @@ import Constants from "expo-constants";
 
 const parkingAreaService = {};
 
-// parkingAreaService.getTotalAvailability = (endpoint, query) => {
-
-//     const [data, setData] = useState([])
-//     const [error, setError] = useState(null)
-
-//     const options = {
-//         method: 'GET',
-//         url: 'https://sss.com/${endpoint}',
-//         params: {...query},
-//     };
-
-//     const fetchData = async () => {
-//         try {
-//             const response = await axios.request(options)
-//             setData(response.data.data);
-
-//         }catch (error) {
-//             setError(error);
-//             alert('There is an error')
-
-//         }
-//     }
-
-//     useEffect(() => {
-//         fetchData();
-
-//     })
-
-//     return {data}
-// }
 
 parkingAreaService.updateSlotAvailability = async (userId, slotId, availability) => {
   let response = {};
@@ -54,6 +24,8 @@ parkingAreaService.updateSlotAvailability = async (userId, slotId, availability)
   try {
     response = await axios.request(options);
   } catch (error) {
+    console.log(error)
+
     alert("There is an Error");
   }
 };

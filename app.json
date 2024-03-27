@@ -13,19 +13,33 @@
     },
     "plugins": [
       "@react-native-firebase/app",
-      "expo-secure-store"
+      "expo-secure-store",
+      ["expo-location", {
+        "isAndroidBackgroundLocationEnabled" : true
+      }],
+      ["expo-build-properties", {
+        "android": {
+          "usesCleartextTraffic": true
+        }
+      }]
     ],
     "assetBundlePatterns": [
       "**/*"
     ],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "infoPlist": {
+        "NSLocationAlwaysAndWhenInUseUsageDescription": "REASON_FOR_REQUEST",
+        "UIBackgroundModes": ["location", "fetch"]
+      }
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
+      "permissions": ["ACCESS_BACKGROUND_LOCATION", "FOREGROUND_SERVICE", "FOREGROUND_SERVICE_LOCATION", "ACCESS_FINE_LOCATION", "ACCESS_COARSE_LOCATION",
+       "READ_EXTERNAL_STORAGE","WRITE_EXTERNAL_STORAGE"],
       "web": {
         "favicon": "./assets/favicon.png"
       },
@@ -37,7 +51,9 @@
         "projectId": "c6185a3c-2e9f-44f3-ae6f-d98b36cdadef"
       }
     },
-    "apiUrl" : "https://a89a-112-134-157-97.ngrok-free.app"
+    "apiUrl" : "https://a89a-112-134-157-97.ngrok-free.app",
+    "raspberryApiUrl" : "http://192.168.1.22:5000"
+
 
     
   }

@@ -1,22 +1,14 @@
-import React, { useState } from "react";
-import { SafeAreaView, StyleSheet } from "react-native";
+import React from "react";
+import { SafeAreaView } from "react-native";
 import { WebView } from "react-native-webview";
+import Constants from "expo-constants";
 
-function LiveStreamScreen({ navigation }) {
-  const onLiveStream = async (email, password) => {};
-
+function LiveStreamScreen() {
   return (
-    <SafeAreaView style={{ flex: 1 }}>
-      <WebView source={{ uri: "http://192.168.1.13:5000/" }} />
+    <SafeAreaView style={{ flex: 1, backgroundColor: "red" }}>
+      <WebView source={{ uri: Constants.expoConfig.raspberryApiUrl }} />
     </SafeAreaView>
   );
 }
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    padding: 30,
-    backgroundColor: "#0C1020",
-  },
-});
 
 export default LiveStreamScreen;
