@@ -1,11 +1,13 @@
-// import { useState } from "react";
 import axios from "axios";
 import Constants from "expo-constants";
 
 const parkingAreaService = {};
 
-
-parkingAreaService.updateSlotAvailability = async (userId, slotId, availability) => {
+parkingAreaService.updateSlotAvailability = async (
+  userId,
+  slotId,
+  availability
+) => {
   let response = {};
   const formData = new FormData();
 
@@ -24,7 +26,7 @@ parkingAreaService.updateSlotAvailability = async (userId, slotId, availability)
   try {
     response = await axios.request(options);
   } catch (error) {
-    console.log(error)
+    console.log(error);
 
     alert("There is an Error");
   }

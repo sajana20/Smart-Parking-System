@@ -1,19 +1,12 @@
-import React, {useEffect} from 'react';
+import {useEffect} from 'react';
 import * as Notifications from 'expo-notifications';
 import messaging from '@react-native-firebase/messaging';
 
 
 function Firebase(props) { 
-    console.log("pushNoti7")
     const requestUserPermission = async () => {
         const authStatus = await messaging().requestPermission();
-        // const enabled =
-        //   authStatus === messaging.AuthorizationStatus.AUTHORIZED ||
-        //   authStatus === messaging.AuthorizationStatus.PROVISIONAL;
-    
-        // if (enabled) {
-        //   console.log("Authorization status:", authStatus);
-        // }
+        
         if (authStatus) {
             await messaging().registerDeviceForRemoteMessages();
         }
@@ -21,14 +14,6 @@ function Firebase(props) {
     
     useEffect(() => {
         requestUserPermission()
-    
-    // if (requestUserPermission()) {
-    //       messaging()
-    //         .getToken()
-    //         .then(
-    //           token => console.log(token) 
-    //         );
-    //     }
       }, []);
     
       // Set up the notification handler for the app

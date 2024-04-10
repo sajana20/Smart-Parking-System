@@ -3,10 +3,14 @@ import { SafeAreaView, StyleSheet, TouchableOpacity } from "react-native";
 import { View, Text } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import sessionStorageService from "../../service/session-storage-service";
+import userTokenService from "../../service/user-token-service";
+
 
 function ProfileScreen({ navigation }) {
   const onLogout = () => {
+    userTokenService.deleteToken();
     sessionStorageService.remove("user_id");
+    
     navigation.navigate("Login");
   };
 

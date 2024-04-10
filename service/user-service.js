@@ -33,26 +33,6 @@ userService.login = async (email, password) => {
   }
 };
 
-userService.logout = async (id) => {
-  const formData = new FormData();
-  formData.append("user_id", id);
-
-  const options = {
-    method: "DETELE",
-    url: Constants.expoConfig.apiUrl + "/logout",
-    data: formData,
-    headers: {
-      "Content-type": "multipart/form-data",
-    },
-  };
-
-  try {
-    await axios.request(options);
-  } catch (error) {
-    alert("Logout failed, Please Try again");
-  }
-};
-
 userService.register = async (userName, email, password) => {
   const formData = new FormData();
   formData.append("user_name", userName);
@@ -69,7 +49,6 @@ userService.register = async (userName, email, password) => {
   };
 
   try {
-    // show response to the user (Successfully added)
     const response = await axios.request(options);
     return response.data;
   } catch (error) {

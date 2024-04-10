@@ -1,4 +1,3 @@
-import { StyleSheet } from "react-native";
 import LoginScreen from "./src/screens/LoginScreen";
 import ParkingArea from "./src/screens/ParkingArea";
 import NavigationScreen from "./src/screens/NavigationScreen";

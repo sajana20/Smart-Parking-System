@@ -98,7 +98,6 @@ function LoginScreen({ navigation }) {
 }
 
 const onPressForgotPassword = () => {
-  // Do forgot password operation
 };
 
 const styles = StyleSheet.create({
